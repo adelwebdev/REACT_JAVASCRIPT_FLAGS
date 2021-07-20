@@ -4,6 +4,7 @@ import Card from "./Card";
 
 const Countries = () => {
   const [data, setData] = useState([]);
+  const [sotredData, setSortedData] = useState([]);
 
   useEffect(() => {
     axios
