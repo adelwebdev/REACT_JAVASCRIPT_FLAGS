@@ -8,7 +8,7 @@ const Countries = () => {
   const [playOnce, SetPlayOnce] = useState(true);
   const [rangeValue, setRangeValue] = useState(40);
   const [selectedRadio, setSelectedRadio] = useState("");
-  const radios = ["Africa", "America", "Asia", "Europa", "Oceania"];
+  const radios = ["Africa", "America", "Asia", "Europe", "Oceania"];
 
   useEffect(() => {
     if (playOnce) {
@@ -47,18 +47,32 @@ const Countries = () => {
           {radios.map((radio) => {
             return (
               <li key={radio}>
-                <input type="radio" value={radio} id={radio} />
+                <input
+                  type="radio"
+                  value={radio}
+                  id={radio}
+                  checked={radio === selectedRadio}
+                  onChange={(e) => setSelectedRadio(e.target.value)}
+                />
                 <label htmlFor="radio">{radio}</label>
               </li>
             );
           })}
         </ul>
       </div>
+      <div className="cancel">
+        {selectedRadio && (
+          <h5 onClick={() => setSelectedRadio("")}>Annuler la recherche</h5>
+        )}
+      </div>
+
       <ul className="countries-list">
-        {sortedData.map((country) => (
-          <Card country={country} key={country.name} />
-          // <li>{country.name}</li>
-        ))}
+        {sortedData
+          .filter((country) => country.region.includes(selectedRadio))
+          .map((country) => (
+            <Card country={country} key={country.name} />
+            // <li>{country.name}</li>
+          ))}
       </ul>
     </div>
   );
