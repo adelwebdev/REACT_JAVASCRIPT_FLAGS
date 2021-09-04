@@ -6,7 +6,7 @@ import Card from "./Card";
 const Countries = () => {
   // ici déclaration du HOOK de react
   // les Hook de react!!!! avec useState!!
-  // data est la vatriable, setData c pr stocker; mettre en place; dans data
+  // data est la vatriable, setData c pr stocker; mettre en place; dans var data
   const [data, setData] = useState([]);
   // on veut classer les pays par population, on crée dabord la variable sortedData (par les HOOK => useSate([]) )
   const [sortedData, setSortedData] = useState([]);
@@ -17,7 +17,7 @@ const Countries = () => {
   // création du tri avec input radio (pr les 5 continents)! pas besoin de coder 5 inputs avec 5 labels radio
   // on crée une logique une fois et on va la maper (maper le array des 5 continents et à chaque fois créer inputs et labels)
   const [selectedRadio, setSelectedRadio] = useState("");
-  // on crée une var Js classique; pas besoin de faire useState à chaque fois
+  // on crée une var JS classique; pas besoin de faire useState à chaque fois
   const radios = ["Africa", "America", "Asia", "Europe", "Oceania"];
 
   // axios pr appelle vers les API, axios s'appelle à l'éxtérieur de Return
@@ -78,7 +78,7 @@ const Countries = () => {
   // l'input et le label sont reliés par le id; alors même en cliquant sur le label on séléctionne l'input
   // pr le radio checké c'est "checked", de base: radio === selectedRadio
   // pour changer la val de checked (radio checké); onChange={(e) => setSelectedRadio(e.target.value)} ; c comme ça qu'on fait les radio checké en react
-  // pr appliquer le tri (ici juste le contient séléctionné); faut faire dans map! c la méthode Filter de Js (filtrer un tableau)
+  // pr appliquer le tri (ici juste le contient séléctionné); faut faire dans map! c la méthode Filter de JS (filtrer un tableau)
   // on filtre sortedData par country.region (par rapport à la forme de nos données) et: includes(selectedRadio)
   // avec check box on peut tout décocher mais avec radio non! (si on veut revenir à la séléction de base, c à d tout!! comme avant de cocher les radios!)
   // pr ça faut créer un button! on veut qu'il se déclanche juste que si on coche un radio et pas avant
