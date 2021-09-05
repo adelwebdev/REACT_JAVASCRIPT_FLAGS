@@ -17,6 +17,12 @@ const News = () => {
   // callback veut dire relance useEffect à chaque fois que la varible qui est dans callback est appélé
   // si le callback est vide, ça veut dire: joue ce qu'il y a à l'intérieur de useEffect, ici getData[]
   const [newsData, setNewsData] = useState([]);
+  // pr afficher ce qui est tapé en dynamique (pas seulement dans la db) faut d'abord créer une var  et stocker dedans ce qui est écrit dans les inputs
+  // on met des guillemets "" pr dire; on attend une var string, on peut changer la var author que on passant par setAuthor ou setContent (pr le contenu du msg de l'author)
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+  // on fait un booléen pr nous dire si on n'est dans l'erreur ou pas (pr mettre sécurité dans input)
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     getData();
@@ -38,11 +44,37 @@ const News = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("submit!");
-    axios.post("http://localhost:3001/articles", {
-      author: "denis",
-      content: "hello les gars",
-      date: Date.now(),
-    });
+
+    // cette partie c pr l'envoi du formulaire
+    // mettre logique de If/Else pour insertion d'une sécu sur input
+    // si on veut erreur (ex ici < 20 cara) on met setError(true); on peut montrer dynamiquement à l'auteur (dans balise: textarea)
+    if (content.length < 20) {
+      setError(true);
+    } else {
+      axios
+        .post("http://localhost:3001/articles", {
+          // pr mettre de la data en brute (non dynamique; ou data qui ne change pas)
+          //   author: "denis",
+          //   content: "hello les gars",
+          //   date: Date.now(),
+          // pr mettre data en dynamique!
+          author: author,
+          content: content,
+          date: Date.now(),
+          // en JS on peut aussi écrire juste: author, à la place de : author: author,
+          // pour remettre à zéro une fois le poste fait, on fait un "then". voir en-bàs
+          // les var (par HOOK) s'affectent dans des (parenthèses) () et non avec = "égal"
+          // là on a juste initialisé author et content à zéro! mais le contenu des inputs; avec react on fait comme suite:
+          //  .then(() => {setAuthor(""); setContent("");}); attention! aprés then... ce sont des ; et non des , comme aprés axios et les Objets en JS.
+          // mais faut tjrs actualiser la page pr voir des nouveaux postes! pr faire sans (en 100% dynamique) il faut rejouer getData() (dans le then.  "voir en bàs")
+          // mettre sécurtité dans input: ex min 140 caractères
+        })
+        .then(() => {
+          setAuthor("");
+          setContent("");
+          getData();
+        });
+    }
   };
   // {} entre accolade veut dire: je me prépare à écrire du JS,
   // A chaque tour de boucle (map du tableau newsData), on joue le composant <Article/>
@@ -50,7 +82,9 @@ const News = () => {
   // attention: faut affecter {article} (variable qu'on a nommé aléatoirement pour mapper) dans une var; ici article (même nom)
   // c dans map pour changer les ordres d'apparition, faire un TRI (à faire avant le map), méthode Sort; sort((a, b) => b.date - a.date) "du plus récent au plus ancien"
   // Partie: Create; càd Poster un msg, lors de soumission du formulaire; faire onSubmit dans balise form
-  // onSubmit={(e) => handleSubmit(e)} / ceci equivaut à faire un addEventLister (sur event "submit") pour la balise "form" et on se récupe l'évenement e !!
+  // onSubmit={(e) => handleSubmit(e)} / ceci equivaut à faire un addEventLister (sur balise "form" avec event "submit") et on se récupe l'évenement e !!
+  // pr récupérer la val des inputs:  <input onChange={(e) => setAuthor(e.target.value)}/> c un addEventLister sur balise input; la var author prend la val de l'input par e.target.value en passant par setAuthor
+  // on met "style" de border pr exprimer des erreurs, en react avec double accolades, voir ci-bàs
   return (
     <div className="news-container">
       <Navigation />
@@ -58,8 +92,19 @@ const News = () => {
       <h1>Ici les News</h1>
 
       <form onSubmit={(e) => handleSubmit(e)} action="">
-        <input type="text" placeholder="Nom" />
-        <textarea placeholder="Message"></textarea>
+        <input
+          onChange={(e) => setAuthor(e.target.value)}
+          type="text"
+          placeholder="Nom"
+          value={author}
+        />
+        <textarea
+          style={{ border: error ? "1px solid red" : "1px solid #61dafb" }}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Message"
+          value={content}
+        ></textarea>
+        <p>Veuiller écrire un text de 20 caractères</p>
         <input type="submit" value="Envoyer" />
         <ul>
           {newsData
