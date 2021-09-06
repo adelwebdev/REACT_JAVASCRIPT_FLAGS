@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import DeleteArticle from "./DeleteArticle";
 
 // on va récuperer les données; avec Props (données du composant News vers Article avec props)
 // le destructuring: en écrivant : ({article}); on vient de destructurer le terme; (props)
@@ -36,10 +37,11 @@ const Article = ({ article }) => {
   // avec data on passe les modification à la db (ici json file) mais faut recharger la page pr voir les modifs sur l'appli
   // ici on touche une limite de react, car le composant Article (qui est enfant de News) ne peut pas passer des props à News
   // le contenu édité ne pourra jamais être transmis à News (faut utiliser Redux) pr afficher les modifs fois soit forcer un rechargement de page
+  // faut insérer cette sécurité dans handle Edit; car si jamais on ne modifie rien! la valeur attribué
   const handleEdit = () => {
     const data = {
       article: article.author,
-      content: editedContent,
+      content: editedContent ? editedContent : article.content,
       // si on met date: Date.now() l'article sera reaffiché avec la date de sa modification!, si on veut garder la date de création alors c date: article.date,
       //   date: Date.now(),
       date: article.date,
@@ -63,6 +65,8 @@ const Article = ({ article }) => {
   // pr aficher en temps réel le nouveu text sur le DOM (sans recharger);  <p>{editedContent ? editedContent : article.content}</p> !!
   // mais faut également changer la default value (de notre texte); defaultValue={editedContent ? editedContent : article.content}
   // faut mettre du style aussi lorsqu'on est en mode édition; on insère: {{background: isEditing ? "#f3feff" : "white"}}
+  //maintenant fairr le DELETE; créer un composant: DeleteArticle; et l'appeler à la place de <button>Delete</button>
+  //on peut transmettre ID à un composant enfant (ici vers DeleteArticle par props) (voir plus bàs) ; DeleteArticle n'a aucune data à remonter
   return (
     <div
       className="article"
@@ -88,7 +92,7 @@ const Article = ({ article }) => {
         ) : (
           <button onClick={() => setIsEditing(true)}>Edit</button>
         )}
-        <button>Supprimer</button>
+        <DeleteArticle id={article.id} />
       </div>
     </div>
   );
