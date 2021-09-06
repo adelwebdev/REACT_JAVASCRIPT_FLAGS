@@ -33,6 +33,9 @@ const Article = ({ article }) => {
   // pr la logique d'édition, faut appeller axios
   // pr envoyer les données à la DB c'est axios.put
   // on prépare un objet (ici "data") pour passer les nouvelles data (aprés modification)
+  // avec data on passe les modification à la db (ici json file) mais faut recharger la page pr voir les modifs sur l'appli
+  // ici on touche une limite de react, car le composant Article (qui est enfant de News) ne peut pas passer des props à News
+  // le contenu édité ne pourra jamais être transmis à News (faut utiliser Redux) pr afficher les modifs fois soit forcer un rechargement de page
   const handleEdit = () => {
     const data = {
       article: article.author,
@@ -41,9 +44,10 @@ const Article = ({ article }) => {
       //   date: Date.now(),
       date: article.date,
     };
-
-    axios.put("http://localhost:3001/articles/" + article.id, data);
-    setIsEditing(false);
+    // on peut aussi sans .then(()) ; on fait direct aprés: axios.put ; setEditing(false)
+    axios.put("http://localhost:3001/articles/" + article.id, data).then(() => {
+      setIsEditing(false);
+    });
   };
 
   console.log(article);
@@ -56,8 +60,14 @@ const Article = ({ article }) => {
   // faut mettre au button valider une logique pr gerer l'édition; une fct
   // pr récupérer le nouveau texte edité c avec onChange = {(e)} (on se récupère l'événement)
   // on récupère l'événement avec (e) => setEditContent(e.target.value)
+  // pr aficher en temps réel le nouveu text sur le DOM (sans recharger);  <p>{editedContent ? editedContent : article.content}</p> !!
+  // mais faut également changer la default value (de notre texte); defaultValue={editedContent ? editedContent : article.content}
+  // faut mettre du style aussi lorsqu'on est en mode édition; on insère: {{background: isEditing ? "#f3feff" : "white"}}
   return (
-    <div className="article">
+    <div
+      className="article"
+      style={{ background: isEditing ? "#f3feff" : "white" }}
+    >
       <div className="card-header">
         <h3>{article.author}</h3>
         <em>Posté le {dateParser(article.date)}</em>
@@ -66,10 +76,10 @@ const Article = ({ article }) => {
         <textarea
           onChange={(e) => setEditContent(e.target.value)}
           autoFocus
-          defaultValue={article.content}
+          defaultValue={editedContent ? editedContent : article.content}
         ></textarea>
       ) : (
-        <p>{article.content}</p>
+        <p>{editedContent ? editedContent : article.content}</p>
       )}
 
       <div className="btn-container">
