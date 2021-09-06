@@ -67,12 +67,14 @@ const News = () => {
           // là on a juste initialisé author et content à zéro! mais le contenu des inputs; avec react on fait comme suite:
           //  .then(() => {setAuthor(""); setContent("");}); attention! aprés then... ce sont des ; et non des , comme aprés axios et les Objets en JS.
           // mais faut tjrs actualiser la page pr voir des nouveaux postes! pr faire sans (en 100% dynamique) il faut rejouer getData() (dans le then.  "voir en bàs")
-          // mettre sécurtité dans input: ex min 140 caractères
+          // mettre sécurtité dans input: ex min 40 caractères
+          // remettre setError(false) dans le "then" qui est aprés le "axios.post" pour enlever le style aux erreurs à chaque initialisation du formulaire
         })
         .then(() => {
           setAuthor("");
           setContent("");
           getData();
+          setError(false);
         });
     }
   };
@@ -85,6 +87,8 @@ const News = () => {
   // onSubmit={(e) => handleSubmit(e)} / ceci equivaut à faire un addEventLister (sur balise "form" avec event "submit") et on se récupe l'évenement e !!
   // pr récupérer la val des inputs:  <input onChange={(e) => setAuthor(e.target.value)}/> c un addEventLister sur balise input; la var author prend la val de l'input par e.target.value en passant par setAuthor
   // on met "style" de border pr exprimer des erreurs, en react avec double accolades, voir ci-bàs
+  // on insère un text <p> pour éxpliquer l'érreur, FAUT CONDITIONNER SON APPARITION
+  // en react comme suit: {error && <p>} ; veut dire: si error est true alors fait ça: ici <p>
   return (
     <div className="news-container">
       <Navigation />
@@ -104,7 +108,8 @@ const News = () => {
           placeholder="Message"
           value={content}
         ></textarea>
-        <p>Veuiller écrire un text de 20 caractères</p>
+        {error && <p>Veuiller écrire un text de 20 caractères</p>}
+
         <input type="submit" value="Envoyer" />
         <ul>
           {newsData
